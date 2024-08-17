@@ -1,9 +1,9 @@
-import { Column, Entity, ManyToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Content } from "./Content";
 
 @Entity("tag")
 class Tag {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn("increment")
   id: string;
 
   @Column()

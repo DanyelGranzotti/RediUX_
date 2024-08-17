@@ -2,8 +2,8 @@ import "dotenv/config";
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { UserAdmin } from "./modules/users/infra/typeorm/entify/UserAdmin";
-import { Content } from "./modules/content/infra/typeorm/entify/Content";
-import { Tag } from "./modules/content/infra/typeorm/entify/Tag";
+import { Content } from "./modules/content/infra/typeorm/entity/Content";
+import { Tag } from "./modules/content/infra/typeorm/entity/Tag";
 
 export const AppDataSource = new DataSource({
   type: "postgres",

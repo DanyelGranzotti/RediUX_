@@ -1,5 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { IContentRepository } from "../../repository/interface/IContentRepository";
+import { Tag } from "../../infra/typeorm/entity/Tag";
 
 interface IRequest {
   title: string;
@@ -7,6 +8,7 @@ interface IRequest {
   description: string;
   link: string;
   media_type: string;
+  tags: Tag[];
 }
 
 @injectable()
@@ -16,13 +18,22 @@ class CreateContentUseCase {
     private contentRepository: IContentRepository,
   ) {}
 
-  async execute({ title, autor, description, link, media_type }: IRequest) {
+  // this method creates a new content in the database
+  async execute({
+    title,
+    autor,
+    description,
+    link,
+    media_type,
+    tags,
+  }: IRequest) {
     const content = await this.contentRepository.create({
       title,
       autor,
       description,
       link,
       media_type,
+      tags,
     });
 
     return content;
