@@ -11,7 +11,7 @@ const deleteTagController = new DeleteTagController();
 const getTagController = new GetTagController();
 
 TagRoutes.post("/", ensureAuthenticated, createTagController.handle);
-TagRoutes.delete("/:id", deleteTagController.handle);
-TagRoutes.get("/", getTagController.handle);
+TagRoutes.delete("/:id", ensureAuthenticated, deleteTagController.handle);
+TagRoutes.get("/", ensureAuthenticated, getTagController.handle);
 
 export { TagRoutes };

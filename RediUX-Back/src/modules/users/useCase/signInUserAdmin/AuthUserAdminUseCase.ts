@@ -36,7 +36,7 @@ class AuthUserAdminUseCase {
 
     const token = sign({}, "6c42b2e01bafd16f1ac50e358a679f6d", {
       subject: user.email,
-      expiresIn: "1d",
+      expiresIn: "1h",
     });
 
     const tokenReturn: IResponse = {

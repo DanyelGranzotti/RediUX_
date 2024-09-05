@@ -8,6 +8,9 @@ services:
       - "3000:3000"
     networks:
       - rediux-network
+    depends_on:
+      - database
+      
   database:
     image: postgres:latest
     container_name: database_rediux
@@ -29,4 +32,3 @@ volumes:
 networks:
   rediux-network:
     driver: bridge
-    
