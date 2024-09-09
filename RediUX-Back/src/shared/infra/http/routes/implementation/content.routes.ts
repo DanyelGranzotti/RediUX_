@@ -21,7 +21,7 @@ contentRoutes.delete(
   deleteContentController.handle,
 );
 
-contentRoutes.get("/", ensureAuthenticated, getContentController.handle);
+contentRoutes.get("/", getContentController.handle);
 
 contentRoutes.patch(
   "/:id",
