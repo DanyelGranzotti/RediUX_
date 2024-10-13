@@ -1,116 +1,94 @@
-import { Box, Container, Typography, Divider } from "@mui/material";
-import { useState, useEffect, useCallback } from "react";
-
-import CustomToolbar from "../components/CustomToolBar/CustomToolBar";
-import SearchField from "../components/SearchField/SearchField";
-import { tags, midiaTypes } from "../constants/Data";
-import TagSelector from "../components/TagSelector/TagSelector";
-import MediaButtonsContainer from "../components/MidiaButtonsContainer/MidiaButtonsContainer";
-import Logo from "../components/Logo/Logo";
-import LogoImg from "../assets/logo.svg";
-import LogoImgSml from "../assets/logo-sml.svg";
-import NavigationLink from "../components/NavigationLink/NavigationLink";
+import { useEffect, useState } from "react";
+import { BsFileTextFill, BsFillMicFill, BsPlayBtnFill } from "react-icons/bs";
+import { IoBookmarks } from "react-icons/io5";
+import { getTag } from "../api/entities/tags";
+import DropdownField from "../components/form/DropdownField";
+import SearchField from "../components/form/SearchField";
 
 const Home = () => {
-    const [search, setSearch] = useState("");
-    const [, setMidia] = useState({
-        livro: false, 
-        artigo: false, 
-        video: false, 
-        podcast: false 
-    })
-    const [tag, setTag] = useState('');
-    const handleSetMidia = useCallback((midia) => {
-        setMidia(midia);
-    }, [setMidia]);
+  const [search, setSearch] = useState("");
+  const [searchError, setSearchError] = useState("");
+  const [tagOptions, setTagOptions] = useState([]);
+  const [tag, setTag] = useState("");
 
-    const handleChange = (event) => {
-        setSearch(event.target.value);
-    };
-      
-    const handleSubmit = useCallback((event) => {
-        if (event) event.preventDefault();
-        const searchTerm = search.trim();
-        const url = `/results?term=${searchTerm}&tag=${tag}`;
-        window.location.href = url;
-    }, [search, tag]);
-    
-    const tagChange = (event) => {
-        setTag(event.target.value);
-    };
+  const fetchTags = async () => {
+    const options = await getTag();
+    setTagOptions(options.map((tag) => ({ label: tag.name, value: tag.id })));
+  };
 
-    const handleKeyPress = (event) => {
-        if (event.key === "Enter") {
-            handleSubmit(event);
-        }
-    };
+  useEffect(() => {
+    fetchTags();
+  }, []);
 
-    useEffect(() => {
-        if (tag) {
-            handleSubmit();
-        }
-    }, [tag, handleSubmit]);
+  const validateSearch = () => {
+    if (!search) {
+      setSearchError("O campo de busca não pode estar vazio.");
+      return false;
+    }
+    setSearchError("");
+    return true;
+  };
 
-    return (
-        <>
-            <CustomToolbar>
-                <a href="/">
-                    <img src={LogoImgSml} height={38} alt="logo-sml" />
-                </a>
-            </CustomToolbar>
+  const handleSearch = () => {
+    if (!validateSearch()) return;
 
-            <Container maxWidth="md" sx={{ mt: 20 }}>
-                <Logo src={LogoImg} alt="Logo" height={100} />
+    console.log("Searching..." + search);
+  };
 
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center"
-                    }}
-                >
-                    <SearchField
-                        value={search}
-                        onChange={handleChange}
-                        onKeyDown={handleKeyPress}
-                        onSubmit={handleSubmit}
-                        width={600}
-                    />
+  return (
+    <main
+      className="container flex flex-col justify-center items-center gap-8 md:px-32"
+      style={{ minHeight: "calc(100vh - 7rem)" }}
+    >
+      <img
+        src="/img/hero_image.png"
+        alt="RediUX Logo"
+        className="w-1/2 md:w-2/6 mb-16"
+      />
+      <div className="flex flex-col md:flex-row justify-center items-center w-full gap-4 ">
+        <SearchField
+          value={search}
+          onChange={setSearch}
+          placeholder="Digite sua busca"
+          error={searchError}
+          onSearch={handleSearch}
+          width="md:w-3/4"
+        />
 
-                    <TagSelector
-                        value={tag}
-                        onChange={tagChange}
-                        options={tags}
-                    />
-                </Box>
+        <DropdownField
+          options={tagOptions}
+          value={tag}
+          onChange={setTag}
+          defaultOption="Tags"
+          width="md:w-1/4"
+        />
+      </div>
+      <hr className="w-full border-1 border-gray my-8 hidden md:block" />
+      <div className="w-full">
+        <h2 className="text-2xl mb-4 text-gray-medium text-center lg:text-left">
+          Navegue por tipo de mídia
+        </h2>
+        <div className="flex flex-col md:flex-row justify-center items-center gap-4">
+          <button className="bg-blue-light hover:bg-blue text-blue-dark font-semibold py-2 px-6 rounded flex items-center gap-2 justify-center min-w-40 md:w-1/4">
+            <IoBookmarks />
+            Livro
+          </button>
+          <button className="bg-blue-light hover:bg-blue text-blue-dark font-semibold py-2 px-6 rounded flex items-center gap-2 justify-center min-w-40 md:w-1/4">
+            <BsFileTextFill />
+            Artigo
+          </button>
+          <button className="bg-blue-light hover:bg-blue text-blue-dark font-semibold py-2 px-6 rounded flex items-center gap-2 justify-center min-w-40 md:w-1/4">
+            <BsFillMicFill />
+            Podcast
+          </button>
+          <button className="bg-blue-light hover:bg-blue text-blue-dark font-semibold py-2 px-6 rounded flex items-center gap-2 justify-center min-w-40 md:w-1/4">
+            <BsPlayBtnFill />
+            Vídeo
+          </button>
+        </div>
+      </div>
+    </main>
+  );
+};
 
-                <Divider sx={{ mt: 5 }} />
-
-                <Typography
-                    variant="h6"
-                    component="h2"
-                    sx={{ mt: 5, color: "gray" }}
-                >
-                    Navegue por Tipo de Mídia
-                </Typography>
-
-                <MediaButtonsContainer midiaTypes={midiaTypes} search={search} handleSetMidia={handleSetMidia} />
-                
-            </Container>
-
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    mt: 25,
-                    mb: 5,
-                    '& > :not(style)': { m: 2 },
-                }}
-            >
-                <NavigationLink to="/login">Administração</NavigationLink>
-                <NavigationLink to="/about">Sobre</NavigationLink>
-            </Box>
-        </>
-    );
-}
-
-export default Home
+export default Home;
