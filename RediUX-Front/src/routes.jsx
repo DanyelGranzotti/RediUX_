@@ -7,6 +7,7 @@ import Error from "./pages/Error";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import Signup from "./pages/Signup";
 import TagManager from "./pages/TagManager";
 
 const Router = () => (
@@ -28,6 +29,14 @@ const Router = () => (
         element={
           <ProtectedRoute>
             <TagManager />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <ProtectedRoute>
+            <Signup />
           </ProtectedRoute>
         }
       />

@@ -1,17 +1,17 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { AuthContext } from "../AuthContext";
+import { signupUser } from "../api/entities/user";
 import StringField from "../components/form/StringField";
 
-const Login = () => {
-  const { login } = useContext(AuthContext);
+const Signup = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const validateEmail = () => {
     if (!email) {
@@ -28,27 +28,31 @@ const Login = () => {
       setPasswordError("O campo de senha não pode estar vazio.");
       return false;
     }
-
+    if (password.length < 6) {
+      setPasswordError("A senha deve ter pelo menos 6 caracteres.");
+      return false;
+    }
     setPasswordError("");
     return true;
   };
 
-  const handleLogin = async () => {
-    if (!validateEmail() || !validatePassword()) return;
+  const validateConfirmPassword = () => {
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("As senhas não coincidem.");
+      return false;
+    }
+    setConfirmPasswordError("");
+    return true;
+  };
 
+  const handleSignup = async () => {
+    if (!validateEmail() || !validatePassword() || !validateConfirmPassword())
+      return;
     try {
-      const response = await login(email, password);
-
-      if (response) {
-        toast.success("Login efetuado com sucesso. Redirecionando...");
-        navigate("/content-manager");
-      }
+      await signupUser(email, password);
+      navigate("/content-manager");
     } catch (error) {
-      if (error.code === "ERR_BAD_REQUEST") {
-        toast.error("E-mail ou senha inválidos.");
-        return;
-      }
-      toast.error("Erro ao efetuar login. Tente novamente mais tarde.");
+      console.error("Signup failed:", error);
     }
   };
 
@@ -62,35 +66,40 @@ const Login = () => {
         alt="RediUX Logo"
         className="w-3/4 md:w-1/4 mb-8"
       />
-      <div
-        className="flex flex-col justify-center items-center w-3/4 md:w-2/6 gap-4 bg-white p-8 rounded-lg md:py-16 md:px-12"
-        onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-      >
+      <div className="flex flex-col justify-center items-center w-3/4 md:w-2/6 gap-4 bg-white p-8 rounded-lg md:py-16 md:px-12">
         <img
           src="/img/horizontal_logo.png"
           alt="RediUX Logo"
           className="w-3/4 mb-8"
         />
+
         <StringField
-          label="Digite seu e-mail"
+          label="Digite o e-mail para acesso"
           placeholder="E-mail"
           type="email"
           onChange={setEmail}
           error={emailError}
         />
         <StringField
-          label="Digite sua senha"
+          label="Digite a senha para acesso"
           placeholder="Senha"
           type="password"
           onChange={setPassword}
           error={passwordError}
         />
-        <button className="blue_dark_btn_layout" onClick={handleLogin}>
-          Entrar
+        <StringField
+          label="Confirme a senha para acesso"
+          placeholder="Confirmar senha"
+          type="password"
+          onChange={setConfirmPassword}
+          error={confirmPasswordError}
+        />
+        <button className="blue_dark_btn_layout" onClick={handleSignup}>
+          Cadastrar
         </button>
       </div>
     </main>
   );
 };
 
-export default Login;
+export default Signup;

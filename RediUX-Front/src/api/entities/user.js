@@ -11,3 +11,14 @@ export const loginUser = async (email, password) => {
     throw error;
   }
 };
+
+export const signupUser = async (email, password) => {
+  const obj = { email, password };
+  try {
+    const response = await httpRequests.postMethod(URLS.USER + "/signup", obj);
+    return response.data;
+  } catch (error) {
+    console.error("Error signing up:", error);
+    throw error;
+  }
+};

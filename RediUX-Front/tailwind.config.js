@@ -38,6 +38,9 @@ export default {
       table: {
         divider: "#0000001f",
       },
+      red: {
+        500: "#f44336",
+      },
     },
     extend: {},
   },

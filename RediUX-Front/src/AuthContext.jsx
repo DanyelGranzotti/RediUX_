@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import React, { createContext, useEffect, useReducer, useState } from "react";
 import { loginUser } from "./api/entities/user";
 
@@ -39,20 +40,41 @@ const authReducer = (state, action) => {
 
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-  const [loading, setLoading] = useState(true); // Estado de carregamento
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
     const user = localStorage.getItem("user");
 
     if (token && user) {
-      dispatch({
-        type: "LOAD_USER",
-        payload: { token, user: JSON.parse(user) },
-      });
+      const decodedToken = jwtDecode(token);
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+
+      if (decodedToken.exp > currentTimestamp) {
+        dispatch({
+          type: "LOAD_USER",
+          payload: { token, user: JSON.parse(user) },
+        });
+      } else {
+        logout();
+      }
     }
 
     setLoading(false);
+
+    const interval = setInterval(() => {
+      const token = localStorage.getItem("jwt");
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+
+        if (decodedToken.exp <= currentTimestamp) {
+          logout();
+        }
+      }
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const login = async (email, password) => {
@@ -65,8 +87,9 @@ const AuthProvider = ({ children }) => {
         type: "LOGIN",
         payload: { token, user },
       });
+      return data;
     } catch (error) {
-      console.error("Login failed:", error);
+      throw error;
     }
   };
 

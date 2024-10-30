@@ -29,7 +29,9 @@ const SearchField = ({
         />
         <button
           onClick={onSearch}
-          className="hover:bg-blue-700 py-2 px-3 rounded-r border h-10 border-l-0"
+          className={`hover:bg-blue-700 py-2 px-3 rounded-r border h-10 border-l-0  ${
+            error ? "border-red-500 " : ""
+          }`}
         >
           <BsSearch className="hover:opacity-40" />
         </button>

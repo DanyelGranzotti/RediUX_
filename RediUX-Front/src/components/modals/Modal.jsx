@@ -8,6 +8,8 @@ const Modal = ({
   children,
   onConfirm = null,
   onConfirmText = "Confirmar",
+  confirmButtonClass = "blue_dark_btn_layout w-3/12",
+  cancelButtonClass = "red_dark_btn_layout w-3/12",
 }) => {
   if (!isOpen) return null;
 
@@ -23,13 +25,13 @@ const Modal = ({
             &times;
           </button>
         </div>
-        <div className="p-4">{children}</div>
+        <div className="p-4 flex flex-col gap-2">{children}</div>
         <div className="border-t px-4 py-2 flex justify-end items-center gap-4">
-          <button className="red_dark_btn_layout w-3/12" onClick={onClose}>
+          <button className={cancelButtonClass} onClick={onClose}>
             Fechar
           </button>
           {onConfirm && (
-            <button className="blue_dark_btn_layout w-3/12" onClick={onConfirm}>
+            <button className={confirmButtonClass} onClick={onConfirm}>
               {onConfirmText}
             </button>
           )}
