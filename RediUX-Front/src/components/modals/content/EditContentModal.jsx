@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { createContent } from "../../../api/entities/content";
+import { updateContent } from "../../../api/entities/content";
 import { getTag } from "../../../api/entities/tags";
 import StringField from "../../form/StringField";
 import TagSelector from "../../form/TagSelector";
 import Modal from "../modal";
 
-const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
+const EditContentModal = ({ isModalOpen, setIsModalOpen, content }) => {
   const [formData, setFormData] = useState({
-    title: "",
-    autor: "",
-    description: "",
-    link: "",
-    mediaType: "",
-    selectedTags: [],
+    title: content?.title || "",
+    autor: content?.autor || "",
+    description: content?.description || "",
+    link: content?.link || "",
+    mediaType: content?.mediaType || "",
+    selectedTags:
+      content?.tags?.map((tag) => ({ id: tag.id, label: tag.name })) || [],
   });
   const [tags, setTags] = useState([]);
 
@@ -23,7 +24,7 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
     setFormData((prevData) => ({ ...prevData, [field]: value }));
   };
 
-  const handleAddContent = async () => {
+  const handleUpdateContent = async () => {
     const { title, autor, description, link, mediaType, selectedTags } =
       formData;
     if (!title || !autor || !description || !link || !mediaType) {
@@ -31,7 +32,7 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
       return;
     }
     try {
-      const response = await createContent({
+      const response = await updateContent(content.id, {
         title,
         autor,
         description,
@@ -42,26 +43,13 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
 
       if (response) {
         setIsModalOpen(false);
-        toast.success("Conteúdo criado com sucesso!");
+        toast.success("Conteúdo atualizado com sucesso!");
       }
     } catch (error) {
-      console.error("Error creating content:", error);
-      toast.error("Erro ao criar conteúdo!");
+      console.error("Error updating content:", error);
+      toast.error("Erro ao atualizar conteúdo!");
     }
   };
-
-  useEffect(() => {
-    if (isModalOpen) {
-      setFormData({
-        title: "",
-        autor: "",
-        description: "",
-        link: "",
-        mediaType: "",
-        selectedTags: [],
-      });
-    }
-  }, [isModalOpen]);
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -76,13 +64,27 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
     fetchTags();
   }, []);
 
+  useEffect(() => {
+    if (isModalOpen && content) {
+      setFormData({
+        title: content.title || "",
+        autor: content.autor || "",
+        description: content.description || "",
+        link: content.link || "",
+        mediaType: content.mediaType || "",
+        selectedTags:
+          content.tags?.map((tag) => ({ id: tag.id, label: tag.name })) || [],
+      });
+    }
+  }, [isModalOpen, content]);
+
   return (
     <Modal
       isOpen={isModalOpen}
       onClose={handleCloseModal}
-      title="Cadastrar Conteúdo"
-      onConfirm={handleAddContent}
-      onConfirmText="Adicionar"
+      title="Editar Conteúdo"
+      onConfirm={handleUpdateContent}
+      onConfirmText="Salvar"
     >
       {["title", "autor", "description", "link", "mediaType"].map((field) => (
         <StringField
@@ -125,4 +127,4 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
   );
 };
 
-export default NewContentModal;
+export default EditContentModal;

@@ -15,7 +15,7 @@ const Modal = ({
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3">
+      <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/2">
         <div className="border-b px-4 py-2 flex justify-between items-center">
           <h2 className="text-xl font-semibold">{title}</h2>
           <button

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { decryptToken } from "../../AuthContext";
 
 const handleError = (error) => {
   if (error?.response?.status === 401) {
@@ -15,6 +16,9 @@ const handleError = (error) => {
 
 const request = async (method, url, data = null, params = null) => {
   try {
+    const encryptedToken = localStorage.getItem("jwt");
+    console.log("encryptedToken", encryptedToken);
+    const token = encryptedToken ? decryptToken(encryptedToken) : null;
     const config = {
       method,
       url,
@@ -22,7 +26,7 @@ const request = async (method, url, data = null, params = null) => {
       params,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        Authorization: token ? `Bearer ${token}` : undefined,
       },
     };
     const response = await axios(config);
@@ -38,3 +42,4 @@ export const getMethodWithParams = (url, params) =>
   request("get", url, null, params);
 export const putMethod = (url, entity) => request("put", url, entity);
 export const deleteMethod = (url) => request("delete", url);
+export const patchMethod = (url, entity) => request("patch", url, entity);

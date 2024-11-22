@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { signupUser } from "../api/entities/user";
 import StringField from "../components/form/StringField";
 
@@ -50,8 +51,10 @@ const Signup = () => {
       return;
     try {
       await signupUser(email, password);
+      toast.success("Cadastro realizado com sucesso. Redirecionando...");
       navigate("/content-manager");
     } catch (error) {
+      toast.error("Erro ao realizar cadastro. Tente novamente mais tarde.");
       console.error("Signup failed:", error);
     }
   };

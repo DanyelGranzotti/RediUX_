@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BsFileTextFill, BsFillMicFill, BsPlayBtnFill } from "react-icons/bs";
 import { IoBookmarks } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 import { getTag } from "../api/entities/tags";
 import DropdownField from "../components/form/DropdownField";
 import SearchField from "../components/form/SearchField";
@@ -10,6 +11,7 @@ const Home = () => {
   const [searchError, setSearchError] = useState("");
   const [tagOptions, setTagOptions] = useState([]);
   const [tag, setTag] = useState("");
+  const navigate = useNavigate();
 
   const fetchTags = async () => {
     const options = await getTag();
@@ -32,7 +34,11 @@ const Home = () => {
   const handleSearch = () => {
     if (!validateSearch()) return;
 
-    console.log("Searching..." + search);
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (tag) params.append("tag", tag);
+
+    navigate(`/content-list?${params.toString()}`);
   };
 
   return (

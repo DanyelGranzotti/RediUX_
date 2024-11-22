@@ -14,8 +14,12 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
 
   const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
       setEmailError("O campo de e-mail não pode estar vazio.");
+      return false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError("Formato de e-mail inválido.");
       return false;
     }
 

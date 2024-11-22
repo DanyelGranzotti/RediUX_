@@ -1,5 +1,12 @@
+import CryptoJS from "crypto-js";
 import { jwtDecode } from "jwt-decode";
-import React, { createContext, useEffect, useReducer, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { loginUser } from "./api/entities/user";
 
 const AuthContext = createContext();
@@ -38,18 +45,46 @@ const authReducer = (state, action) => {
   }
 };
 
+const decryptToken = (encryptedToken) => {
+  const secretKey = process.env.REACT_APP_SECRET_KEY;
+  const bytes = CryptoJS.AES.decrypt(encryptedToken, secretKey);
+  return bytes.toString(CryptoJS.enc.Utf8);
+};
+
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem("jwt");
-    const user = localStorage.getItem("user");
+  const encryptToken = (token) => {
+    const secretKey = process.env.REACT_APP_SECRET_KEY;
+    return CryptoJS.AES.encrypt(token, secretKey).toString();
+  };
 
-    if (token && user) {
+  const logout = useCallback(() => {
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("user");
+    dispatch({ type: "LOGOUT" });
+  }, []);
+
+  const checkTokenExpiration = useCallback(() => {
+    const encryptedToken = localStorage.getItem("jwt");
+    if (encryptedToken) {
+      const token = decryptToken(encryptedToken);
       const decodedToken = jwtDecode(token);
       const currentTimestamp = Math.floor(Date.now() / 1000);
+      if (decodedToken.exp <= currentTimestamp) {
+        logout();
+      }
+    }
+  }, [logout]);
 
+  const loadUserFromLocalStorage = useCallback(() => {
+    const encryptedToken = localStorage.getItem("jwt");
+    const user = localStorage.getItem("user");
+    if (encryptedToken && user) {
+      const token = decryptToken(encryptedToken);
+      const decodedToken = jwtDecode(token);
+      const currentTimestamp = Math.floor(Date.now() / 1000);
       if (decodedToken.exp > currentTimestamp) {
         dispatch({
           type: "LOAD_USER",
@@ -59,29 +94,21 @@ const AuthProvider = ({ children }) => {
         logout();
       }
     }
+  }, [logout]);
 
+  useEffect(() => {
+    loadUserFromLocalStorage();
     setLoading(false);
-
-    const interval = setInterval(() => {
-      const token = localStorage.getItem("jwt");
-      if (token) {
-        const decodedToken = jwtDecode(token);
-        const currentTimestamp = Math.floor(Date.now() / 1000);
-
-        if (decodedToken.exp <= currentTimestamp) {
-          logout();
-        }
-      }
-    }, 60000);
-
+    const interval = setInterval(checkTokenExpiration, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [checkTokenExpiration, loadUserFromLocalStorage]);
 
-  const login = async (email, password) => {
+  const login = useCallback(async (email, password) => {
     try {
       const data = await loginUser(email, password);
       const { token, user } = data;
-      localStorage.setItem("jwt", token);
+      const encryptedToken = encryptToken(token);
+      localStorage.setItem("jwt", encryptedToken);
       localStorage.setItem("user", JSON.stringify(user));
       dispatch({
         type: "LOGIN",
@@ -91,13 +118,7 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       throw error;
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("jwt");
-    localStorage.removeItem("user");
-    dispatch({ type: "LOGOUT" });
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ ...state, login, logout, loading }}>
@@ -106,4 +127,4 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-export { AuthContext, AuthProvider };
+export { AuthContext, AuthProvider, decryptToken };

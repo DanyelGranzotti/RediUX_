@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { getContent } from "../api/entities/content";
 import SearchField from "../components/form/SearchField";
 import DeleteContentModal from "../components/modals/content/DeleteContentModal";
-import EditContentModal from "../components/modals/content/EditContentModal ";
+import EditContentModal from "../components/modals/content/EditContentModal";
 import NewContentModal from "../components/modals/content/NewContentModal";
 
 const ContentManager = () => {

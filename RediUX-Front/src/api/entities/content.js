@@ -1,7 +1,7 @@
 import * as httpRequests from "../common/api_requests";
 import { URLS } from "../common/endpoints";
 
-export const getContent = async (title = "") => {
+export const getContent = async (title = "", tag = "") => {
   try {
     const response = await httpRequests.getMethod(
       `${URLS.CONTENT}` + (title ? `?title=${title}` : "")
@@ -13,25 +13,9 @@ export const getContent = async (title = "") => {
   }
 };
 
-export const createContent = async (
-  title,
-  autor,
-  description,
-  link,
-  media_type,
-  tags = []
-) => {
-  const obj = {
-    title,
-    autor,
-    description,
-    link,
-    media_type,
-    tags,
-  };
-  console.log(obj);
+export const createContent = async (content) => {
   try {
-    const response = await httpRequests.postMethod(URLS.CONTENT, obj);
+    const response = await httpRequests.postMethod(URLS.CONTENT, content);
     return response.data;
   } catch (error) {
     console.error("Error creating content:", error);
@@ -51,13 +35,23 @@ export const deleteContent = async (id) => {
 
 export const updateContent = async (id, content) => {
   try {
-    const response = await httpRequests.putMethod(
+    const response = await httpRequests.patchMethod(
       URLS.CONTENT + "/" + id,
       content
     );
     return response.data;
   } catch (error) {
     console.error("Error updating content:", error);
+    throw error;
+  }
+};
+
+export const getContentById = async (id) => {
+  try {
+    const response = await httpRequests.getMethod(`${URLS.CONTENT}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting content by ID:", error);
     throw error;
   }
 };
