@@ -3,7 +3,6 @@ import { BsFileTextFill, BsFillMicFill, BsPlayBtnFill } from "react-icons/bs";
 import { IoBookmarks } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { getTag } from "../api/entities/tags";
-import DropdownField from "../components/form/DropdownField";
 import SearchField from "../components/form/SearchField";
 
 const Home = () => {
@@ -58,16 +57,16 @@ const Home = () => {
           placeholder="Digite sua busca"
           error={searchError}
           onSearch={handleSearch}
-          width="md:w-3/4"
+          // width="md:w-3/4"
         />
 
-        <DropdownField
+        {/* <DropdownField
           options={tagOptions}
           value={tag}
           onChange={setTag}
           defaultOption="Tags"
           width="md:w-1/4"
-        />
+        /> */}
       </div>
       <hr className="w-full border-1 border-gray my-8 hidden md:block" />
       <div className="w-full">

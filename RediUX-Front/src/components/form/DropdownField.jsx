@@ -7,6 +7,7 @@ const DropdownField = ({
   onChange,
   error,
   defaultOption = "Selecione uma opção",
+  defaultValue = "",
   width = "w-full",
 }) => {
   return (
@@ -17,7 +18,7 @@ const DropdownField = ({
         </label>
       )}
       <select
-        value={value}
+        value={value || defaultValue}
         onChange={(e) => onChange(e.target.value)}
         className={`shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-10 ${
           error ? "border-red-500" : ""

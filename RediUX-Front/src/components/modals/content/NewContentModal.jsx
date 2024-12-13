@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { createContent } from "../../../api/entities/content";
 import { getTag } from "../../../api/entities/tags";
+import DropdownField from "../../form/DropdownField";
 import StringField from "../../form/StringField";
 import TagSelector from "../../form/TagSelector";
 import Modal from "../modal";
@@ -26,10 +27,26 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
   const handleAddContent = async () => {
     const { title, autor, description, link, mediaType, selectedTags } =
       formData;
+    const urlPattern = new RegExp(
+      "^(https?:\\/\\/)?" +
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
+        "((\\d{1,3}\\.){3}\\d{1,3}))" +
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+        "(\\?[;&a-z\\d%_.~+=-]*)?" +
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    );
+
     if (!title || !autor || !description || !link || !mediaType) {
       toast.error("Todos os campos devem ser preenchidos!");
       return;
     }
+
+    if (!urlPattern.test(link)) {
+      toast.error("O link deve ser uma URL válida!");
+      return;
+    }
+
     try {
       const response = await createContent({
         title,
@@ -37,7 +54,7 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
         description,
         link,
         media_type: mediaType,
-        tags: selectedTags.map((tag) => ({ id: tag.id, name: tag.label })),
+        tags: selectedTags.map((tag) => tag.id),
       });
 
       if (response) {
@@ -84,7 +101,7 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
       onConfirm={handleAddContent}
       onConfirmText="Adicionar"
     >
-      {["title", "autor", "description", "link", "mediaType"].map((field) => (
+      {["title", "autor", "description", "link"].map((field) => (
         <StringField
           key={field}
           label={
@@ -93,7 +110,6 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
               autor: "Autor",
               description: "Descrição",
               link: "Link",
-              mediaType: "Tipo de Mídia",
             }[field]
           }
           value={formData[field]}
@@ -102,6 +118,19 @@ const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
           width="w-full"
         />
       ))}
+      <DropdownField
+        label="Tipo de Mídia"
+        value={formData.mediaType}
+        onChange={(value) => handleInputChange("mediaType", value)}
+        options={[
+          { label: "Livro", value: "livro" },
+          { label: "Vídeo", value: "video" },
+          { label: "Podcast", value: "podcast" },
+          { label: "Artigo", value: "artigo" },
+        ]}
+        defaultOption="Selecione uma opção"
+        width="w-full"
+      />
       <TagSelector
         label="Tags"
         selectedTags={formData.selectedTags}

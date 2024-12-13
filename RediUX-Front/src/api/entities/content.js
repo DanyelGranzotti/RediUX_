@@ -48,7 +48,7 @@ export const updateContent = async (id, content) => {
 
 export const getContentById = async (id) => {
   try {
-    const response = await httpRequests.getMethod(`${URLS.CONTENT}/${id}`);
+    const response = await httpRequests.getMethod(`${URLS.CONTENT}?id=${id}`);
     return response.data;
   } catch (error) {
     console.error("Error getting content by ID:", error);

@@ -3,8 +3,8 @@ import { BsArrowLeft, BsSearch } from "react-icons/bs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getContent } from "../api/entities/content";
 import { getTag } from "../api/entities/tags";
-import DropdownField from "../components/form/DropdownField";
 import SearchField from "../components/form/SearchField";
+import ViewContentModal from "../components/modals/content/ViewContentModal";
 
 const ContentList = () => {
   const [search, setSearch] = useState("");
@@ -12,6 +12,8 @@ const ContentList = () => {
   const [tagOptions, setTagOptions] = useState([]);
   const [tag, setTag] = useState("");
   const [content, setContent] = useState([]);
+  const [selectedContent, setSelectedContent] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -59,8 +61,9 @@ const ContentList = () => {
     navigate(-1);
   };
 
-  const handleContentRedirect = (id) => {
-    navigate(`/content/${id}`);
+  const handleContentClick = (content) => {
+    setSelectedContent(content);
+    setIsModalOpen(true);
   };
 
   return (
@@ -77,21 +80,21 @@ const ContentList = () => {
           placeholder="Digite sua busca"
           error={searchError}
           onSearch={handleSearch}
-          width="md:w-3/4"
+          // width="md:w-3/4"
         />
-        <DropdownField
+        {/* <DropdownField
           options={tagOptions}
           value={tag}
           onChange={setTag}
           defaultOption="Tags"
           width="md:w-1/4"
-        />
+        /> */}
       </div>
       <div className="w-full">
         <h2 className="text-2xl mb-4 text-gray-medium text-center lg:text-left flex items-center gap-4">
           <BsSearch size={24} />
           Aqui estão os resultados da sua busca: {search}{" "}
-          {tag && `com a tag ${tag}`}
+          {/* {tag && `com a tag ${tag}`} */}
         </h2>
         {content.length > 0 ? (
           content.map((item) => (
@@ -105,10 +108,10 @@ const ContentList = () => {
                 <span className="text-sm text-gray-500">{item.mediaType}</span>
               </div>
               <button
-                onClick={() => handleContentRedirect(item.id)}
+                onClick={() => handleContentClick(item)}
                 className="dark_blue_dark_outline_btn_layout w-2/12"
               >
-                Acessar
+                Visualizar
               </button>
             </div>
           ))
@@ -116,6 +119,13 @@ const ContentList = () => {
           <p className="text-center">Nenhum conteúdo encontrado.</p>
         )}
       </div>
+      {selectedContent && (
+        <ViewContentModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          content={selectedContent}
+        />
+      )}
     </main>
   );
 };

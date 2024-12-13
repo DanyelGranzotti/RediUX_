@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { updateContent } from "../../../api/entities/content";
 import { getTag } from "../../../api/entities/tags";
+import DropdownField from "../../form/DropdownField";
 import StringField from "../../form/StringField";
 import TagSelector from "../../form/TagSelector";
 import Modal from "../modal";
@@ -27,10 +28,26 @@ const EditContentModal = ({ isModalOpen, setIsModalOpen, content }) => {
   const handleUpdateContent = async () => {
     const { title, autor, description, link, mediaType, selectedTags } =
       formData;
+    const urlPattern = new RegExp(
+      "^(https?:\\/\\/)?" +
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
+        "((\\d{1,3}\\.){3}\\d{1,3}))" +
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+        "(\\?[;&a-z\\d%_.~+=-]*)?" +
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    );
+
     if (!title || !autor || !description || !link || !mediaType) {
       toast.error("Todos os campos devem ser preenchidos!");
       return;
     }
+
+    if (!urlPattern.test(link)) {
+      toast.error("O link deve ser uma URL válida!");
+      return;
+    }
+
     try {
       const response = await updateContent(content.id, {
         title,
@@ -38,7 +55,7 @@ const EditContentModal = ({ isModalOpen, setIsModalOpen, content }) => {
         description,
         link,
         media_type: mediaType,
-        tags: selectedTags.map((tag) => ({ id: tag.id, name: tag.label })),
+        tags: selectedTags.map((tag) => tag.id),
       });
 
       if (response) {
@@ -71,7 +88,7 @@ const EditContentModal = ({ isModalOpen, setIsModalOpen, content }) => {
         autor: content.autor || "",
         description: content.description || "",
         link: content.link || "",
-        mediaType: content.mediaType || "",
+        mediaType: content.media_type || "",
         selectedTags:
           content.tags?.map((tag) => ({ id: tag.id, label: tag.name })) || [],
       });
@@ -86,7 +103,7 @@ const EditContentModal = ({ isModalOpen, setIsModalOpen, content }) => {
       onConfirm={handleUpdateContent}
       onConfirmText="Salvar"
     >
-      {["title", "autor", "description", "link", "mediaType"].map((field) => (
+      {["title", "autor", "description", "link"].map((field) => (
         <StringField
           key={field}
           label={
@@ -95,7 +112,6 @@ const EditContentModal = ({ isModalOpen, setIsModalOpen, content }) => {
               autor: "Autor",
               description: "Descrição",
               link: "Link",
-              mediaType: "Tipo de Mídia",
             }[field]
           }
           value={formData[field]}
@@ -104,6 +120,20 @@ const EditContentModal = ({ isModalOpen, setIsModalOpen, content }) => {
           width="w-full"
         />
       ))}
+      <DropdownField
+        label="Tipo de Mídia"
+        value={formData.mediaType}
+        onChange={(value) => handleInputChange("mediaType", value)}
+        options={[
+          { label: "Livro", value: "livro" },
+          { label: "Vídeo", value: "video" },
+          { label: "Podcast", value: "podcast" },
+          { label: "Artigo", value: "artigo" },
+        ]}
+        defaultOption="Selecione uma opção"
+        defaultValue={formData.mediaType}
+        width="w-full"
+      />
       <TagSelector
         label="Tags"
         selectedTags={formData.selectedTags}

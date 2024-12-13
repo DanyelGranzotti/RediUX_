@@ -17,7 +17,6 @@ const handleError = (error) => {
 const request = async (method, url, data = null, params = null) => {
   try {
     const encryptedToken = localStorage.getItem("jwt");
-    console.log("encryptedToken", encryptedToken);
     const token = encryptedToken ? decryptToken(encryptedToken) : null;
     const config = {
       method,
