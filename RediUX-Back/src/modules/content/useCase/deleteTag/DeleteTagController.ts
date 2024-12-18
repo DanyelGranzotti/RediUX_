@@ -12,7 +12,7 @@ class DeleteTagController {
       throw new AppError("ID is required", 400);
     }
 
-    const idInt = parseInt(id, 10);
+    const idInt = Number(id);
 
     if (isNaN(idInt)) {
       throw new AppError("ID must be a number", 400);

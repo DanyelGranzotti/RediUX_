@@ -1,91 +1,99 @@
-import { Container, Box } from "@mui/material";
-import Logo from "../assets/logo.svg";
-import Ilustracao from "../assets/ilustracao.svg";
-
-import { useGlobalState } from "../components/Login/GlobalStateContext";
-import { useState, useEffect } from "react";
-
-import LoginForm from "../components/Login/LoginForm";
-import LoginButton from "../components/Buttons/LoginButton";
-import NavigationLink from "../components/NavigationLink/NavigationLink";
-import CustomToolBar from "../components/CustomToolBar/CustomToolBar";
-import BackButton from "../components/Buttons/BackButton";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AuthContext } from "../AuthContext";
+import StringField from "../components/form/StringField";
 
 const Login = () => {
-  const { setGlobalState, globalState, handleLogin } = useGlobalState();
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    handleLogin(email, password);
-  };
-
-  useEffect(() => {
-    if (globalState.isAuth && !localStorage.getItem('isAuth')) {
-      setGlobalState({...globalState, isAuth: false });
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      setEmailError("O campo de e-mail não pode estar vazio.");
+      return false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError("Formato de e-mail inválido.");
+      return false;
     }
-  }, [globalState, globalState.isAuth, setGlobalState]);
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+    setEmailError("");
+    return true;
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+  const validatePassword = () => {
+    if (!password) {
+      setPasswordError("O campo de senha não pode estar vazio.");
+      return false;
+    }
+
+    setPasswordError("");
+    return true;
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleSubmit(event);
+  const handleLogin = async () => {
+    if (!validateEmail() || !validatePassword()) return;
+
+    try {
+      const response = await login(email, password);
+
+      if (response) {
+        toast.success("Login efetuado com sucesso. Redirecionando...");
+        navigate("/content-manager");
+      }
+    } catch (error) {
+      if (error.code === "ERR_BAD_REQUEST") {
+        toast.error("E-mail ou senha inválidos.");
+        return;
+      }
+      toast.error("Erro ao efetuar login. Tente novamente mais tarde.");
     }
   };
 
   return (
-  <>
-
-    <CustomToolBar>
-      <BackButton/>
-    </CustomToolBar>
-
-    <Container
-      sx={{
-        paddingTop: 10,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        mt: 10,
-      }}
+    <main
+      className="container flex flex-col justify-center items-center bg-gray-light md:flex-row gap-16"
+      style={{ minHeight: "calc(100dvh - 7rem)", minWidth: "100vw" }}
     >
-        <Box>
-          <img src={Ilustracao} alt="Ilustração" width={500} />
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            backgroundColor: "#E9ECEF",
-            padding: 6,
-            borderRadius: 2,
-          }}
-        >
-          <img src={Logo} alt="Logo" height={75} />
-
-          <LoginForm
-            handleUserChange={handleEmailChange}
-            handlePasswordChange={handlePasswordChange}
-            handleKeyPress={handleKeyPress} />
-
-          <NavigationLink
-            to={"/reset-password"}
-            children={"Esqueci minha senha"} />
-
-          <LoginButton handleSubmit={handleSubmit} />
-        </Box>
-      </Container>
-    </>
+      <img
+        src="/img/hero_login.png"
+        alt="RediUX Logo"
+        className="w-3/4 md:w-1/4 mb-8"
+      />
+      <div
+        className="flex flex-col justify-center items-center w-3/4 md:w-2/6 gap-4 bg-white p-8 rounded-lg md:py-16 md:px-12"
+        onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+      >
+        <img
+          src="/img/horizontal_logo.png"
+          alt="RediUX Logo"
+          className="w-3/4 mb-8"
+        />
+        <StringField
+          label="Digite seu e-mail"
+          placeholder="E-mail"
+          type="email"
+          onChange={setEmail}
+          error={emailError}
+        />
+        <StringField
+          label="Digite sua senha"
+          placeholder="Senha"
+          type="password"
+          onChange={setPassword}
+          error={passwordError}
+        />
+        <button className="blue_dark_btn_layout" onClick={handleLogin}>
+          Entrar
+        </button>
+      </div>
+    </main>
   );
 };
 

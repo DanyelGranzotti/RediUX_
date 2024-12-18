@@ -5,7 +5,7 @@ class UserAdmin {
   @PrimaryGeneratedColumn("increment")
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()

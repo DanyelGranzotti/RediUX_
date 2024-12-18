@@ -23,7 +23,7 @@ contentRoutes.delete(
 
 contentRoutes.get("/", getContentController.handle);
 
-contentRoutes.patch(
+contentRoutes.put(
   "/:id",
   ensureAuthenticated,
   updateContentController.updateContent,

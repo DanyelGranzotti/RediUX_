@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { CreateContentUseCase } from "./CreateContentUseCase";
+import { SchemaContent } from "../../infra/zod/SchemaContent";
 
 class CreateContentController {
   async handle(request: Request, response: Response): Promise<Response> {
-    const { title, autor, description, link, media_type, tags } = request.body;
+    const { title, autor, description, link, media_type, tags } =
+      SchemaContent.parse(request.body);
 
     const createContentUseCase = container.resolve(CreateContentUseCase);
 

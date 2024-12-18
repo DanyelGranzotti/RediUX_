@@ -1,6 +1,7 @@
 import { container, inject, injectable } from "tsyringe";
 import { IUserRepository } from "../../repository/interface/IUserRepository";
 import { EncryptProvider } from "../../../../shared/container/providers/encrypt-provider";
+import { AppError } from "../../../../shared/erros/AppError";
 
 interface IRequest {
   email: string;
@@ -17,7 +18,7 @@ class CreateUserAdminUseCase {
     const userAlreadyExists = await this.userRepository.findByEmail(email);
     const encryptProvider = container.resolve(EncryptProvider);
     if (userAlreadyExists) {
-      throw new Error("User already exists");
+      throw new AppError("User already exists", 400);
     }
 
     password = await encryptProvider.encrypt(password);

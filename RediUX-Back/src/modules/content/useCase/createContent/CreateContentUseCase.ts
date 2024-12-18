@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IContentRepository } from "../../repository/interface/IContentRepository";
-import { Tag } from "../../infra/typeorm/entity/Tag";
+import { TagRepository } from "../../repository/TagRepository";
+import { AppError } from "../../../../shared/erros/AppError";
 
 interface IRequest {
   title: string;
@@ -8,7 +9,7 @@ interface IRequest {
   description: string;
   link: string;
   media_type: string;
-  tags: Tag[];
+  tags: number[];
 }
 
 @injectable()
@@ -16,9 +17,10 @@ class CreateContentUseCase {
   constructor(
     @inject("ContentRepository")
     private contentRepository: IContentRepository,
+    @inject("TagRepository")
+    private tagRepository: TagRepository,
   ) {}
 
-  // this method creates a new content in the database
   async execute({
     title,
     autor,
@@ -27,16 +29,32 @@ class CreateContentUseCase {
     media_type,
     tags,
   }: IRequest) {
-    const content = await this.contentRepository.create({
+    const tagEntities = await Promise.all(
+      tags.map(async (tag) => {
+        const tagById = await this.tagRepository.findById(tag);
+        if (!tagById) {
+          throw new AppError("Tag not found");
+        }
+        return tagById;
+      }),
+    );
+
+    const contentFindByTitle = await this.contentRepository.findByTitle(title);
+
+    if (contentFindByTitle) {
+      throw new AppError("Content already exists");
+    }
+
+    const newContent = await this.contentRepository.create({
       title,
       autor,
       description,
       link,
       media_type,
-      tags,
+      tags: tagEntities,
     });
 
-    return content;
+    return newContent;
   }
 }
 

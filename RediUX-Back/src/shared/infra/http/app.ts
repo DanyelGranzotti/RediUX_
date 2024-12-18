@@ -7,6 +7,7 @@ import { routes } from "./routes";
 import { AppError } from "../../erros/AppError";
 import SwaggerFile from "../../../swagger.json";
 import cors from "cors";
+import { z } from "zod";
 const app = express();
 
 AppDataSource.initialize().then(async () => {
@@ -21,6 +22,12 @@ AppDataSource.initialize().then(async () => {
       if (err instanceof AppError) {
         return response.status(err.statusCode).json({
           message: err.message,
+        });
+      }
+
+      if (err instanceof z.ZodError) {
+        return response.status(400).json({
+          message: err.errors,
         });
       }
 

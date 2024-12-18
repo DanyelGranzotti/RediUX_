@@ -12,9 +12,9 @@ O RediUX é uma aplicação web projetada para o compartilhamento de conteúdo e
 
 ## 🧑🏾‍💻 Desenvolvedores e Responsabilidades
 
-- **[Luiz Eduardo](https://github.com/Luiz-Eduardo-BL)**: Tech Lead e Desenvolvedor
-- **[Lucas Amorim](https://linkedin.com/in/lxcasamorim)**: Desenvolvedor
-
+- **[Luiz Eduardo](https://github.com/Luiz-Eduardo-BL)**: Tech Lead
+- **[Jeferson Augusto](https://www.linkedin.com/in/jeferson-augusto-41a349294/)**: Desenvolvedor
+- **[Danyel Granzotti](https://www.linkedin.com/in/danyel-granzotti/)**: Desenvolvedor
 ## 🛠️ Tecnologias Utilizadas
 
 - **JavaScript**: Node.js no BackEnd e React no FrontEnd

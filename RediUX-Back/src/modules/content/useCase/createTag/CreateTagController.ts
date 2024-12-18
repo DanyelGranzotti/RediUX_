@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { CreateTagUseCase } from "./CreateTagUseCase";
+import { SchemaTag } from "../../infra/zod/SchemaTag";
 
 class CreateTagController {
   // this method is responsible for creating a new tag
   async handle(request: Request, response: Response): Promise<Response> {
-    const { name } = request.body;
+    const { name } = SchemaTag.parse(request.body);
 
     const createTagUseCase = container.resolve(CreateTagUseCase);
 

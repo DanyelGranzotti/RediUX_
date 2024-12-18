@@ -4,7 +4,7 @@ import { Content } from "./Content";
 @Entity("tag")
 class Tag {
   @PrimaryGeneratedColumn("increment")
-  id: string;
+  id: number;
 
   @Column()
   name: string;

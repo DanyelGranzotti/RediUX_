@@ -11,11 +11,7 @@ class DeleteContentController {
       return res.status(400).json({ message: "ID is required" });
     }
 
-    const idInt = parseInt(id, 10);
-
-    if (isNaN(idInt)) {
-      return res.status(400).json({ message: "ID must be a number" });
-    }
+    const idInt = Number(id);
 
     try {
       await deleteContentUseCase.execute(idInt);

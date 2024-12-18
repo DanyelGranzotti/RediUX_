@@ -1,13 +1,13 @@
 import { Content } from "../../infra/typeorm/entity/Content";
-import { Tag } from "../../infra/typeorm/entity/Tag";
+import { ITag } from "../../infra/typeorm/entity/interface/ITag";
 
-interface IcreateContentDTO {
+interface ContentDTO {
   title: string;
   autor: string;
   description: string;
   link: string;
   media_type: string;
-  tags: Tag[];
+  tags: ITag[];
 }
 
 interface IContentRepository {
@@ -18,22 +18,17 @@ interface IContentRepository {
     link,
     media_type,
     tags,
-  }: IcreateContentDTO): Promise<Content>;
+  }: ContentDTO): Promise<Content>;
 
-  update(
-    id: number,
-    data: {
-      title?: string;
-      autor?: string;
-      description?: string;
-      link?: string;
-      media_type?: string;
-    },
-  ): Promise<Content>;
+  update(id: number, data: ContentDTO): Promise<Content>;
 
   list(data: { id?: number; title?: string }): Promise<Content[]>;
 
   delete(id: number): Promise<void>;
+
+  findByTitle(title: string): Promise<Content | null>;
+
+  findById(id: number): Promise<Content | null>;
 }
 
-export { IContentRepository, IcreateContentDTO };
+export { IContentRepository, ContentDTO };

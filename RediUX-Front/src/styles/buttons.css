@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.blue_dark_btn_layout {
+  justify-content: center;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 0.25rem;
+  padding: 0px 12px;
+  border: none;
+  gap: 10px;
+  @apply bg-blue-dark text-white h-10;
+}
+
+.blue_dark_btn_layout:hover {
+  opacity: 0.7;
+  transition: 0.2s;
+}
+
+.blue_dark_btn_layout:disabled {
+  @apply bg-gray;
+}
+
+.red_dark_btn_layout {
+  justify-content: center;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 0.25rem;
+  padding: 0px 12px;
+  border: none;
+  gap: 10px;
+  @apply bg-status-red text-white h-10;
+}
+
+.red_dark_btn_layout:hover {
+  opacity: 0.7;
+  transition: 0.2s;
+}
+
+.red_dark_btn_layout:disabled {
+  @apply bg-gray;
+}
+
+.red_dark_outline_btn_layout {
+  justify-content: center;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 0.25rem;
+  padding: 0px 12px;
+  border: 1px solid #ff0000;
+  gap: 10px;
+  @apply text-status-red h-10;
+}
+
+.red_dark_outline_btn_layout:hover {
+  opacity: 0.7;
+  transition: 0.2s;
+}
+
+.red_dark_outline_btn_layout:disabled {
+  @apply bg-gray;
+}
+
+.dark_blue_dark_outline_btn_layout {
+  justify-content: center;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 0.25rem;
+  padding: 0px 12px;
+  border: 1px solid #00008b;
+  gap: 10px;
+  @apply text-blue-dark h-10;
+}
+
+.dark_blue_dark_outline_btn_layout:hover {
+  opacity: 0.7;
+  transition: 0.2s;
+}
+
+.dark_blue_dark_outline_btn_layout:disabled {
+  @apply bg-gray;
+}

@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { CreateUserAdminUseCase } from "./CreateUserAdminUseCase";
 import { container } from "tsyringe";
+import { UserSchema } from "../../infra/zod/UserSchema";
 
 class CreateUserAdminController {
   // this method creates a new user based on the email and password passed as a parameter
   async handle(request: Request, response: Response): Promise<Response> {
-    const { email, password } = request.body;
+    const { email, password } = UserSchema.parse(request.body);
 
     const createUserAdminUseCase = container.resolve(CreateUserAdminUseCase);
     try {

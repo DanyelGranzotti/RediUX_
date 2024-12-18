@@ -6,9 +6,17 @@ class GetTagController {
   async handle(request: Request, response: Response): Promise<Response> {
     const getTagUseCase = container.resolve(GetTagUseCase);
 
-    const { name } = request.query as { name?: string };
+    const { name, page, limit } = request.query as {
+      name?: string;
+      page?: number;
+      limit?: number;
+    };
     try {
-      const tag = await getTagUseCase.execute({ name: name as string });
+      const tag = await getTagUseCase.execute({
+        name: name as string,
+        page: page as number,
+        limit: limit as number,
+      });
 
       return response.status(200).json(tag);
     } catch (error) {
