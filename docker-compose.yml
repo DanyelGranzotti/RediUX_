@@ -20,7 +20,21 @@ services:
       - DB_NAME=rediux
     depends_on:
       - database
-      
+
+  frontend:
+    container_name: front-rediux
+    build: ./RediUX-Front
+    image: rediux_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./RediUX-Front:/usr/app
+      - /usr/app/node_modules
+    networks:
+      - rediux-network
+    depends_on:
+      - backend
+
   database:
     image: postgres:16
     container_name: database_rediux
