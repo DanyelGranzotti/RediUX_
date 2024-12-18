@@ -35,7 +35,7 @@ export const deleteContent = async (id) => {
 
 export const updateContent = async (id, content) => {
   try {
-    const response = await httpRequests.patchMethod(
+    const response = await httpRequests.putMethod(
       URLS.CONTENT + "/" + id,
       content
     );
