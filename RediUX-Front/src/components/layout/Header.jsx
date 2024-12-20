@@ -18,7 +18,6 @@ const Header = () => {
         <Link to="/">
           <img src="/svg/logo.svg" alt="RediUX Logo" />
         </Link>
-
         {isAuthenticated && (
           <button
             onClick={handleLogout}

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     container_name: back-rediux
@@ -26,12 +24,12 @@ services:
     build: ./RediUX-Front
     image: rediux_frontend
     ports:
-      - "5173:5173"
-    volumes:
-      - ./RediUX-Front:/usr/app
-      - /usr/app/node_modules
+      - "8092:80"
     networks:
       - rediux-network
+    environment:
+      - API_END_POINT=http://localhost:3000
+      - REACT_APP_SECRET_KEY=aP9vB7xQ3zL1kW8nR5tY2mF6jH4eS0uV
     depends_on:
       - backend
 

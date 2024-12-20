@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsPencilFill, BsTrashFill } from "react-icons/bs";
 import { toast } from "react-toastify";
 import { getContent } from "../api/entities/content";
@@ -37,7 +37,7 @@ const ContentManager = () => {
 
   useEffect(() => {
     fetchContents();
-  }, [openNewContent, openDeleteContent, openEditContent]); 
+  }, [openNewContent, openDeleteContent, openEditContent]);
 
   useEffect(() => {
     if (!search) {

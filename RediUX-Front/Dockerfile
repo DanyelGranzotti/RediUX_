@@ -1,4 +1,4 @@
-FROM node:20.12.2
+FROM node:20.12.2 AS build
 
 WORKDIR /usr/app
 
@@ -8,6 +8,13 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 5173
+RUN npm run build
 
-CMD ["npm", "run", "dev"]
+FROM nginx:1.25.2
+
+COPY --from=build /usr/app/dist /usr/share/nginx/html
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -46,9 +46,21 @@ const authReducer = (state, action) => {
 };
 
 const decryptToken = (encryptedToken) => {
-  const secretKey = process.env.REACT_APP_SECRET_KEY;
-  const bytes = CryptoJS.AES.decrypt(encryptedToken, secretKey);
-  return bytes.toString(CryptoJS.enc.Utf8);
+  try {
+    const secretKey = process.env.REACT_APP_SECRET_KEY;
+    if (!secretKey) {
+      throw new Error("Secret key is not defined");
+    }
+    const bytes = CryptoJS.AES.decrypt(encryptedToken, secretKey);
+    const decryptedToken = bytes.toString(CryptoJS.enc.Utf8);
+    if (!decryptedToken) {
+      throw new Error("Failed to decrypt token");
+    }
+    return decryptedToken;
+  } catch (error) {
+    console.error("Error decrypting token:", error);
+    return null;
+  }
 };
 
 const AuthProvider = ({ children }) => {
@@ -57,6 +69,7 @@ const AuthProvider = ({ children }) => {
 
   const encryptToken = (token) => {
     const secretKey = process.env.REACT_APP_SECRET_KEY;
+
     return CryptoJS.AES.encrypt(token, secretKey).toString();
   };
 
@@ -83,13 +96,17 @@ const AuthProvider = ({ children }) => {
     const user = localStorage.getItem("user");
     if (encryptedToken && user) {
       const token = decryptToken(encryptedToken);
-      const decodedToken = jwtDecode(token);
-      const currentTimestamp = Math.floor(Date.now() / 1000);
-      if (decodedToken.exp > currentTimestamp) {
-        dispatch({
-          type: "LOAD_USER",
-          payload: { token, user: JSON.parse(user) },
-        });
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+        if (decodedToken.exp > currentTimestamp) {
+          dispatch({
+            type: "LOAD_USER",
+            payload: { token, user: JSON.parse(user) },
+          });
+        } else {
+          logout();
+        }
       } else {
         logout();
       }

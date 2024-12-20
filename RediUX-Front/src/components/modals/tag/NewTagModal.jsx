@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { createTag } from "../../../api/entities/tags";
 import StringField from "../../form/StringField";
-import Modal from "../modal";
+import Modal from "../Modal";
 
 const NewTagModal = ({ isModalOpen, setIsModalOpen }) => {
   const [name, setName] = useState("");

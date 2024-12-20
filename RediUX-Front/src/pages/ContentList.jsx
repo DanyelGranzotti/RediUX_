@@ -19,12 +19,16 @@ const ContentList = () => {
 
   const fetchTags = async () => {
     const options = await getTag();
-    setTagOptions(options.map((tag) => ({ label: tag.name, value: tag.id })));
+    if (Array.isArray(options)) {
+      setTagOptions(options.map((tag) => ({ label: tag.name, value: tag.id })));
+    }
   };
 
   const fetchContent = async (search, tag) => {
     const contentData = await getContent(search, tag);
-    setContent(contentData);
+    if (Array.isArray(contentData)) {
+      setContent(contentData);
+    }
   };
 
   useEffect(() => {

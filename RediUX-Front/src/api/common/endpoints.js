@@ -1,4 +1,4 @@
-const { API_END_POINT } = process.env;
+const API_END_POINT = process.env.API_END_POINT;
 
 export const URLS = {
   USER: `${API_END_POINT}/user`,

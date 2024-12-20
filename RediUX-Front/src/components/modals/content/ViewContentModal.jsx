@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "../modal";
+import Modal from "../Modal";
 
 const ViewContentModal = ({ isModalOpen, setIsModalOpen, content }) => {
   const handleCloseModal = () => setIsModalOpen(false);

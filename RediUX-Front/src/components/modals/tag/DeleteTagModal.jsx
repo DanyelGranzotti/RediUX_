@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { deleteTag } from "../../../api/entities/tags";
-import Modal from "../modal";
+import Modal from "../Modal";
 
 const DeleteTagModal = ({ isModalOpen, setIsModalOpen, tag }) => {
   const handleCloseModal = () => {

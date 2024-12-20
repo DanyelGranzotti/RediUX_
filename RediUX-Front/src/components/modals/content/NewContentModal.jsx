@@ -5,7 +5,7 @@ import { getTag } from "../../../api/entities/tags";
 import DropdownField from "../../form/DropdownField";
 import StringField from "../../form/StringField";
 import TagSelector from "../../form/TagSelector";
-import Modal from "../modal";
+import Modal from "../Modal";
 
 const NewContentModal = ({ isModalOpen, setIsModalOpen }) => {
   const [formData, setFormData] = useState({

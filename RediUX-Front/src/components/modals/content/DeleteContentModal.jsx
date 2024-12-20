@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { deleteContent } from "../../../api/entities/content";
-import Modal from "../modal";
+import Modal from "../Modal";
 
 const DeleteContentModal = ({ isModalOpen, setIsModalOpen, content }) => {
   const handleCloseModal = () => {

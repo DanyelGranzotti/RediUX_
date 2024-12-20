@@ -27,9 +27,8 @@ const Router = () => (
     <Header />
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/content-list/:search?&:tag?" element={<ContentList />} />
-      <Route path="/content/:id" element={<Content />} />
       <Route path="/content-list" element={<ContentList />} />
+      <Route path="/content/:id" element={<Content />} />
       {protectedRoute("/content-manager", ContentManager)}
       {protectedRoute("/tag-manager", TagManager)}
       {protectedRoute("/register", Signup)}
